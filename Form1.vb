@@ -34,10 +34,13 @@ Friend Class Form1
         Const MsgErrFim As String = "O programa MudaFundo não poderá funcionar"
 
         Randomize()
+
+        'Gambiarra
         Dim EsseDir As String = "H:\Imagens"
+
         DirFoi = EsseDir & "\Foi"
         'On Error GoTo SemIni
-        FileOpen(1, "H:\Imagens\MudaFundo.ini", OpenMode.Input)
+        FileOpen(1, EsseDir & "\MudaFundo.ini", OpenMode.Input)
         Input(1, Data)
         Input(1, Arq)
         'On Error GoTo ConfAutomatico
