@@ -54,6 +54,7 @@ Friend Class Form1
         On Error Resume Next
         Kill(EsseDir & "\" & Arq)
         On Error GoTo 0
+        Dim repetido As Boolean = False
 
 Inicio:
         File.Path = EsseDir
@@ -83,54 +84,59 @@ Inicio:
         End If
         Hoje.Value = VB6.Format(Today, "dd/mm/yyyy")
 Continua:
-        If Data = Hoje.Value Then
-            If MsgBox("Deseja trocar o arquivo?", MsgBoxStyle.YesNo + MsgBoxStyle.Question, "O programa já foi executado hoje") = MsgBoxResult.No Then
-                End
+        If repetido = False Then
+            If Data = Hoje.Value Then
+                If MsgBox("Deseja trocar o arquivo?", MsgBoxStyle.YesNo + MsgBoxStyle.Question + MsgBoxStyle.DefaultButton2, "O programa já foi executado hoje") = MsgBoxResult.No Then
+                    End
+                Else
+                    repetido = True
+                    GoTo Inicio
+                End If
             End If
-        Else
-            Escolha = Int(Quant * Rnd())
-            Arq = File.Items(Escolha)
-
-            Dim TemJpg As Integer = InStr(LCase(Arq), "jpg")
-            If TemJpg = 0 Then
-                MsgBox("Arquivo sem extensão jpg")
-            End If
-
-            FileOpen(1, "H:\Imagens\MudaFundo.ini", OpenMode.Output)
-            PrintLine(1, Hoje.Value)
-            PrintLine(1, Arq)
-            PrintLine(1, Automatico)
-            FileClose(1)
-
-            PICT = System.Drawing.Image.FromFile(Arq)
-            'UPGRADE_WARNING: SavePicture was upgraded to System.Drawing.Image.Save and has a new behavior. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
-            PICT.Save("Fundo.bmp")
-
-            'On Error GoTo SemDirFoi
-MoveJpg:
-            FileCopy(EsseDir & "\" & Arq, DirFoi & "\" & Arq)
-            'On Error GoTo 0
-            'Kill(EsseDir & "\" & Arq)
-            '   Arq = CurDir + "\Fundo.jpg"
-            'X = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0&, "(None)", SPIF_UPDATEINIFILE Or SPIF_SENDWININICHANGE)
-
-            '   X = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0&, (CurDir + "\Preto.bmp"), SPIF_UPDATEINIFILE Or SPIF_SENDWININICHANGE)
-            '
-            '   X = DoEvents
-            'Arq = EsseDir & "\Fundo.bmp"
-            SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, EsseDir & "\Fundo.bmp", SPIF_SENDWININICHANGE Or SPIF_UPDATEINIFILE)
-            'SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, Arq, SPIF_SENDWININICHANGE Or SPIF_UPDATEINIFILE)
-            'SystemParametersInfo SPI_SETDESKWALLPAPER, 0&, ByVal xFile, SPIF_SENDWININICHANGE Or SPIF_UPDATEINIFILE
-
-            'X = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0&, (CurDir + "\Fundo.bmp"), SPIF_UPDATEINIFILE Or SPIF_SENDWININICHANGE)
-
-            '   X = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0&, Arq, SPIF_UPDATEINIFILE Or SPIF_SENDWININICHANGE)
-            '   WinExec "rundll32.exe shell32.dll,Control_RunDLL desk.cpl,,0", 0
-
-            'Thread.Sleep(100)
-            'On Error Resume Next
-            'Kill(EsseDir & "\" & Arq)
         End If
+
+        Escolha = Int(Quant * Rnd())
+        Arq = File.Items(Escolha)
+
+        Dim TemJpg As Integer = InStr(LCase(Arq), "jpg")
+        If TemJpg = 0 Then
+            MsgBox("Arquivo sem extensão jpg")
+        End If
+
+        FileOpen(1, "H:\Imagens\MudaFundo.ini", OpenMode.Output)
+        PrintLine(1, Hoje.Value)
+        PrintLine(1, Arq)
+        PrintLine(1, Automatico)
+        FileClose(1)
+
+        PICT = System.Drawing.Image.FromFile(Arq)
+        'UPGRADE_WARNING: SavePicture was upgraded to System.Drawing.Image.Save and has a new behavior. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
+        PICT.Save("Fundo.bmp")
+
+        'On Error GoTo SemDirFoi
+MoveJpg:
+        FileCopy(EsseDir & "\" & Arq, DirFoi & "\" & Arq)
+        'On Error GoTo 0
+        'Kill(EsseDir & "\" & Arq)
+        '   Arq = CurDir + "\Fundo.jpg"
+        'X = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0&, "(None)", SPIF_UPDATEINIFILE Or SPIF_SENDWININICHANGE)
+
+        '   X = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0&, (CurDir + "\Preto.bmp"), SPIF_UPDATEINIFILE Or SPIF_SENDWININICHANGE)
+        '
+        '   X = DoEvents
+        'Arq = EsseDir & "\Fundo.bmp"
+        SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, EsseDir & "\Fundo.bmp", SPIF_SENDWININICHANGE Or SPIF_UPDATEINIFILE)
+        'SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, Arq, SPIF_SENDWININICHANGE Or SPIF_UPDATEINIFILE)
+        'SystemParametersInfo SPI_SETDESKWALLPAPER, 0&, ByVal xFile, SPIF_SENDWININICHANGE Or SPIF_UPDATEINIFILE
+
+        'X = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0&, (CurDir + "\Fundo.bmp"), SPIF_UPDATEINIFILE Or SPIF_SENDWININICHANGE)
+
+        '   X = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0&, Arq, SPIF_UPDATEINIFILE Or SPIF_SENDWININICHANGE)
+        '   WinExec "rundll32.exe shell32.dll,Control_RunDLL desk.cpl,,0", 0
+
+        'Thread.Sleep(100)
+        'On Error Resume Next
+        'Kill(EsseDir & "\" & Arq)
         End
 
 SemDirFoi:
