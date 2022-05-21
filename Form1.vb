@@ -27,9 +27,7 @@ Friend Class Form1
         Dim Hoje As New VB6.FixedLengthString(10)
         Dim Escolha As Short
         Dim PICT As System.Drawing.Image
-
         Dim Automatico As String
-        'Dim Automatico As New VB6.FixedLengthString(3)
 
         Const MsgErrFim As String = "O programa MudaFundo não poderá funcionar"
 
@@ -39,22 +37,18 @@ Friend Class Form1
         Dim EsseDir As String = "H:\Imagens"
 
         DirFoi = EsseDir & "\Foi"
-        'On Error GoTo SemIni
         FileOpen(1, EsseDir & "\MudaFundo.ini", OpenMode.Input)
         Input(1, Data)
         Input(1, Arq)
-        'On Error GoTo ConfAutomatico
-
         Input(1, Automatico)
-        'Input(1, Automatico.Value)
 
         On Error GoTo 0
         FileClose(1)
-
+        Dim repetido As Boolean = False
+Apaga:
         On Error Resume Next
         Kill(EsseDir & "\" & Arq)
         On Error GoTo 0
-        Dim repetido As Boolean = False
 
 Inicio:
         File.Path = EsseDir
@@ -90,7 +84,11 @@ Continua:
                     End
                 Else
                     repetido = True
-                    GoTo Inicio
+                    If MsgBox("Deseja apagar o arquivo?", MsgBoxStyle.YesNo + MsgBoxStyle.Question + MsgBoxStyle.DefaultButton2, "O programa já foi executado hoje") = MsgBoxResult.No Then
+                        GoTo Inicio
+                    Else
+                        GoTo Apaga
+                    End If
                 End If
             End If
         End If
@@ -110,35 +108,11 @@ Continua:
         FileClose(1)
 
         PICT = System.Drawing.Image.FromFile(Arq)
-        'UPGRADE_WARNING: SavePicture was upgraded to System.Drawing.Image.Save and has a new behavior. Click for more: 'ms-help://MS.VSCC.v90/dv_commoner/local/redirect.htm?keyword="9B7D5ADD-D8FE-4819-A36C-6DEDAF088CC7"'
         PICT.Save("Fundo.bmp")
-
-        'On Error GoTo SemDirFoi
 MoveJpg:
         FileCopy(EsseDir & "\" & Arq, DirFoi & "\" & Arq)
-        'On Error GoTo 0
-        'Kill(EsseDir & "\" & Arq)
-        '   Arq = CurDir + "\Fundo.jpg"
-        'X = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0&, "(None)", SPIF_UPDATEINIFILE Or SPIF_SENDWININICHANGE)
-
-        '   X = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0&, (CurDir + "\Preto.bmp"), SPIF_UPDATEINIFILE Or SPIF_SENDWININICHANGE)
-        '
-        '   X = DoEvents
-        'Arq = EsseDir & "\Fundo.bmp"
         SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, EsseDir & "\Fundo.bmp", SPIF_SENDWININICHANGE Or SPIF_UPDATEINIFILE)
-        'SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, Arq, SPIF_SENDWININICHANGE Or SPIF_UPDATEINIFILE)
-        'SystemParametersInfo SPI_SETDESKWALLPAPER, 0&, ByVal xFile, SPIF_SENDWININICHANGE Or SPIF_UPDATEINIFILE
-
-        'X = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0&, (CurDir + "\Fundo.bmp"), SPIF_UPDATEINIFILE Or SPIF_SENDWININICHANGE)
-
-        '   X = SystemParametersInfo(SPI_SETDESKWALLPAPER, 0&, Arq, SPIF_UPDATEINIFILE Or SPIF_SENDWININICHANGE)
-        '   WinExec "rundll32.exe shell32.dll,Control_RunDLL desk.cpl,,0", 0
-
-        'Thread.Sleep(100)
-        'On Error Resume Next
-        'Kill(EsseDir & "\" & Arq)
         End
-
 SemDirFoi:
         If Err.Number = 76 Then
             MkDir("Foi")
